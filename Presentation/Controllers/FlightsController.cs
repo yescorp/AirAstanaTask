@@ -1,5 +1,6 @@
 ﻿using Application.Dtos.Incoming;
 using Application.UseCases.Flights.Commands.AddFlight;
+using Application.UseCases.Flights.Commands.ChangeFlightStatus;
 using Application.UseCases.Flights.Queries.GetFlights;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -26,9 +27,18 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddFlight(AddFlightDto dto)
+        public async Task<IActionResult> AddFlight([FromBody] AddFlightDto dto)
         {
             var command = new AddFlightCommand(dto);
+            var result = await _mediator.Send(command);
+
+            return Ok(result);
+        }
+
+        [HttpPut("{flightId}")]
+        public async Task<IActionResult> ChangeFlightStatus([FromRoute] int flightId, [FromBody] ChangeFlightStatusDto dto)
+        {
+            var command = new ChangeFlightStatusCommand(flightId, dto);
             var result = await _mediator.Send(command);
 
             return Ok(result);
