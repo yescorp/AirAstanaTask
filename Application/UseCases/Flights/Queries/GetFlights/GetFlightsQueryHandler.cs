@@ -1,4 +1,5 @@
-﻿using Application.Common.Models;
+﻿using Application.Abstractions.Cqrs;
+using Application.Common.Models;
 using Application.Dtos.Outgoing;
 using Application.UseCases.Flights.Queries.Filters;
 using Domain.Abstractions;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Flights.Queries.GetFlights
 {
-    internal class GetFlightsQueryHandler
+    internal class GetFlightsQueryHandler : IQueryHandler<GetFlightsQuery, IEnumerable<FlightResponse>>
     {
 
         private IFlightsRepository _flightsRepository;
