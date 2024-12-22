@@ -1,11 +1,15 @@
 using Application;
 using Infrastructure;
 using Microsoft.OpenApi.Models;
+using Presentation.Utils;
+using Serilog;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services
     .AddApplication(builder.Configuration)
@@ -17,6 +21,13 @@ builder.Services
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration
+    .Enrich.With(new UserEnricher(builder.Services.BuildServiceProvider().GetRequiredService<IHttpContextAccessor>()))
+    .ReadFrom.Configuration(context.Configuration);
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -49,6 +60,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 

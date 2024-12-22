@@ -1,6 +1,8 @@
 ﻿using Domain.Entities;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,14 +14,16 @@ namespace Infrastructure.Database
 {
     public class AirAstanaContext : DbContext
     {
+        private ILogger _logger;
         public DbSet<User> Users { get; set; } = null!;
 
         public DbSet<Flight> Flights { get; set; } = null!;
         public DbSet<Role> Roles { get; set; } = null!;
 
-        public AirAstanaContext(DbContextOptions<AirAstanaContext> options)
+        public AirAstanaContext(DbContextOptions<AirAstanaContext> options, ILogger<AirAstanaContext> logger)
             : base(options)
         {
+            _logger = logger;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -69,6 +73,56 @@ namespace Infrastructure.Database
             });
 
             base.OnModelCreating(modelBuilder);
+        }
+
+        public override int SaveChanges()
+        {
+            LogChanges();
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            LogChanges();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void LogChanges()
+        {
+            var changes = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted);
+
+            foreach (var entry in changes)
+            {
+                var entityName = entry.Entity.GetType().Name;
+                var state = entry.State.ToString();
+
+                if (entry.State == EntityState.Modified)
+                {
+                    var originalValues = entry.OriginalValues.Properties
+                        .ToDictionary(p => p.Name, p => entry.OriginalValues[p.Name]?.ToString());
+
+                    var currentValues = entry.CurrentValues.Properties
+                        .ToDictionary(p => p.Name, p => entry.CurrentValues[p.Name]?.ToString());
+
+                    _logger.LogInformation("Entity {EntityName} modified. Original: {@OriginalValues}, Current: {@CurrentValues}",
+                        entityName, originalValues, currentValues);
+                }
+                else if (entry.State == EntityState.Added)
+                {
+                    var newValues = entry.CurrentValues.Properties
+                        .ToDictionary(p => p.Name, p => entry.CurrentValues[p.Name]?.ToString());
+
+                    _logger.LogInformation("Entity {EntityName} added. Values: {@NewValues}", entityName, newValues);
+                }
+                else if (entry.State == EntityState.Deleted)
+                {
+                    var deletedValues = entry.OriginalValues.Properties
+                        .ToDictionary(p => p.Name, p => entry.OriginalValues[p.Name]?.ToString());
+
+                    _logger.LogInformation("Entity {EntityName} deleted. Values: {@DeletedValues}", entityName, deletedValues);
+                }
+            }
         }
     }
 }
