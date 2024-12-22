@@ -13,7 +13,9 @@ namespace Domain.Abstractions
         public Task<TEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
         public Task<IEnumerable<TEntity>> GetFilteredAsync<TOrderBy>(Expression<Func<TEntity, TOrderBy>>? orderBy, IFilter<TEntity>[] filters, CancellationToken cancellationToken = default);
-        
+
+        public Task<IEnumerable<TEntity>> GetAll(CancellationToken cancellationToken = default);
+
         public Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default);
 
         public Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken = default);

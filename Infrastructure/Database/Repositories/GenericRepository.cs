@@ -44,6 +44,11 @@ namespace Infrastructure.Database.Repositories
             return await _dbSet.FirstOrDefaultAsync(filter, cancellationToken);
         }
 
+        public Task<IEnumerable<TEntity>> GetAll(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(_dbSet.AsEnumerable());
+        }
+
         public async Task<TEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             return await _dbSet.FindAsync(new object[] { id }, cancellationToken);

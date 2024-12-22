@@ -1,0 +1,14 @@
+global using Xunit;
+global using Application.Dtos.Incoming;
+global using Domain.Enums;
+global using Application.UseCases.Flights.Commands.AddFlight;
+global using Domain.Abstractions;
+global using Domain.Entities;
+global using Moq;
+global using Application.Abstractions.Authorization;
+global using Application.UseCases.Flights.Commands.ChangeFlightStatus;
+global using Application.UseCases.Flights.Queries.Filters;
+global using Application.UseCases.Flights.Queries.GetFlights;
+global using Application.UseCases.Users.Commands.RegisterUser;
+global using Application.UseCases.Users.Queries.AuthorizeUser;
+global using System.Linq.Expressions;

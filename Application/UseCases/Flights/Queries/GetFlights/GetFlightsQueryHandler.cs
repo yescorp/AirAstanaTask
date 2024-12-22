@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Flights.Queries.GetFlights
 {
-    internal class GetFlightsQueryHandler : IQueryHandler<GetFlightsQuery, IEnumerable<FlightResponse>>
+    public class GetFlightsQueryHandler : IQueryHandler<GetFlightsQuery, IEnumerable<FlightResponse>>
     {
 
         private IFlightsRepository _flightsRepository;

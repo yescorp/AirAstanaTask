@@ -34,7 +34,7 @@ namespace Application.UseCases.Users.Commands.RegisterUser
             request.Dto.Password = password;
             var user = request.Dto.ToUser(saltBase64);
 
-            var roles = await _roleRepository.GetFilteredAsync<string>(null, new IFilter<Role>[] { });
+            var roles = await _roleRepository.GetAll(cancellationToken);
 
             var isZeroUserRecords = !await _userRepository.AnyAsync(u => true, cancellationToken);
 
