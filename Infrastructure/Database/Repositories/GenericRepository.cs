@@ -27,10 +27,21 @@ namespace Infrastructure.Database.Repositories
             return result.Entity;
         }
 
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
+        {
+            var result = await _dbSet.AnyAsync(filter);
+            return result;
+        }
+
         public Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
             _dbSet.Remove(entity);
             return Task.CompletedTask;
+        }
+
+        public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
+        {
+            return await _dbSet.FirstOrDefaultAsync(filter, cancellationToken);
         }
 
         public async Task<TEntity?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -38,7 +49,7 @@ namespace Infrastructure.Database.Repositories
             return await _dbSet.FindAsync(new object[] { id }, cancellationToken);
         }
 
-        public async Task<List<TEntity>> GetFilteredAsync<TOrderBy>(Expression<Func<TEntity, TOrderBy>>? orderBy, IFilter<TEntity>[] filters, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<TEntity>> GetFilteredAsync<TOrderBy>(Expression<Func<TEntity, TOrderBy>>? orderBy, IFilter<TEntity>[] filters, CancellationToken cancellationToken = default)
         {
             var entities = _dbSet.AsQueryable();
             foreach (var filter in filters.Where(f => f.Filter != null).Select(f => f.Filter!))

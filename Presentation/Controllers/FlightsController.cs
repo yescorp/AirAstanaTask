@@ -2,7 +2,9 @@
 using Application.UseCases.Flights.Commands.AddFlight;
 using Application.UseCases.Flights.Commands.ChangeFlightStatus;
 using Application.UseCases.Flights.Queries.GetFlights;
+using Domain.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
@@ -18,6 +20,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetFlights([FromQuery] string? origin, [FromQuery] string? destination)
         {
             var query = new GetFlightsQuery(origin, destination);
@@ -27,6 +30,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = RoleNames.Moderator)]
         public async Task<IActionResult> AddFlight([FromBody] AddFlightDto dto)
         {
             var command = new AddFlightCommand(dto);
@@ -36,6 +40,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPut("{flightId}")]
+        [Authorize(Roles = RoleNames.Moderator)]
         public async Task<IActionResult> ChangeFlightStatus([FromRoute] int flightId, [FromBody] ChangeFlightStatusDto dto)
         {
             var command = new ChangeFlightStatusCommand(flightId, dto);
