@@ -52,7 +52,7 @@ namespace Application.UseCases.Users.Commands.RegisterUser
             await _userRepository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
-            return new BaseResponse(true);
+            return new BaseResponse();
         }
     }
 }

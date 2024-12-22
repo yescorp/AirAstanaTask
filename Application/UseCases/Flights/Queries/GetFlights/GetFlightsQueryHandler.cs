@@ -28,7 +28,7 @@ namespace Application.UseCases.Flights.Queries.GetFlights
             var flights = await _flightsRepository.GetFilteredAsync(flight => flight.Arrival, filters, cancellationToken);
             var flightResponse = flights.Select(f => new FlightResponse(f));
 
-            return new BaseResponse<IEnumerable<FlightResponse>>(true, flightResponse);
+            return new BaseResponse<IEnumerable<FlightResponse>>(flightResponse);
         }
     }
 }

@@ -25,12 +25,17 @@ namespace Application.UseCases.Flights.Commands.ChangeFlightStatus
         {
             var flight = await _flightsRepository.GetByIdAsync(request.Id);
 
-            flight!.Status = request.Dto.Status;
+            if (flight == null)
+            {
+                return new BaseResponse<FlightResponse>(new Error("NotFound", $"Flight with id {request.Id} not found"));
+            }
+
+            flight.Status = request.Dto.Status;
 
             var result = await _flightsRepository.UpdateAsync(flight);
             await _unitOfWork.SaveChangesAsync();
 
-            return new BaseResponse<FlightResponse>(true, new FlightResponse(result));
+            return new BaseResponse<FlightResponse>(new FlightResponse(result));
         }
     }
 }

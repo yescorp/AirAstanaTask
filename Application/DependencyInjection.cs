@@ -1,7 +1,9 @@
 ﻿using Application.Abstractions.Authorization;
+using Application.Behaviour;
 using Application.Common.Options;
 using Application.Services;
 using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +30,7 @@ namespace Application
             services.AddMediatR(configuration =>
                 configuration.RegisterServicesFromAssembly(assembly));
             services.AddValidatorsFromAssembly(assembly);
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehaviour<,>));
 
             services.AddTransient<IPasswordHashEvaluator, PasswordHashEvaluator>();
             services.AddTransient<ITokenGenerator, AccessTokenGenerator>();

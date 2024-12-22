@@ -22,6 +22,11 @@ namespace Presentation.Controllers
             var command = new RegisterUserCommand(dto);
             var result = await _mediator.Send(command);
 
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
 
@@ -30,6 +35,11 @@ namespace Presentation.Controllers
         {
             var query = new AuthorizeUserQuery(dto);
             var result = await _mediator.Send(query);
+            
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

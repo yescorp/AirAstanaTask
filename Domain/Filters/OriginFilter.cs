@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Flights.Queries.Filters
 {
-    internal class OriginFilter : IFilter<Flight>
+    public class OriginFilter : IFilter<Flight>
     {
         public OriginFilter(string? origin)
         {

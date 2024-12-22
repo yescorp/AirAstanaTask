@@ -8,19 +8,44 @@ namespace Application.Common.Models
 {
     public class BaseResponse
     {
-        public BaseResponse(bool success, string? message = null)
+        public BaseResponse()
+        {
+            this.Success = true;
+            this.Errors = new Error[] { };
+        }
+
+        public BaseResponse(params Error[] errors)
+        {
+            this.Success = false;
+            this.Errors = errors;
+        }
+
+        public BaseResponse(bool success, Error[] errors)
         {
             this.Success = success;
-            this.Message = message;
+            this.Errors = errors;
         }
+        
         public bool Success { get; set; }
-        public string? Message { get; set; }
+       
+        public Error[] Errors { get; set; }
     }
 
     public class BaseResponse<TResult> : BaseResponse
     {
-        public BaseResponse(bool success, TResult? result, string? message = null)
-            : base(success, message)
+        public BaseResponse(TResult result)
+            : base()
+        {
+            this.Data = result;
+        }
+
+        public BaseResponse(params Error[] errors)
+            : base(errors)
+        {
+        }
+
+        public BaseResponse(bool success, TResult? result, Error[] errors)
+            : base(success, errors)
         {
             this.Data = result;
         }

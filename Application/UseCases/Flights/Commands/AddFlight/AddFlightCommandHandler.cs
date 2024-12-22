@@ -27,7 +27,7 @@ namespace Application.UseCases.Flights.Commands.AddFlight
 
             await _unitOfWork.SaveChangesAsync();
 
-            return new BaseResponse<FlightResponse>(true, new FlightResponse(result));
+            return new BaseResponse<FlightResponse>(new FlightResponse(result));
         }
     }
 }

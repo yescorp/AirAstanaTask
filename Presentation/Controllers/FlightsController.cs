@@ -26,6 +26,11 @@ namespace Presentation.Controllers
             var query = new GetFlightsQuery(origin, destination);
             var result = await _mediator.Send(query);
 
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
 
@@ -36,6 +41,11 @@ namespace Presentation.Controllers
             var command = new AddFlightCommand(dto);
             var result = await _mediator.Send(command);
 
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
 
@@ -45,6 +55,11 @@ namespace Presentation.Controllers
         {
             var command = new ChangeFlightStatusCommand(flightId, dto);
             var result = await _mediator.Send(command);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

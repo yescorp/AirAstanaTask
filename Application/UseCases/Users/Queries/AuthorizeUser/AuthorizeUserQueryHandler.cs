@@ -31,19 +31,19 @@ namespace Application.UseCases.Users.Queries.AuthorizeUser
 
             if (user == null)
             {
-                return new BaseResponse<AccessTokenResponse>(false, null);
+                return new BaseResponse<AccessTokenResponse>(new Error("NotFound", "User is not found"));
             }
 
             var isPasswordMatch = _passwordHashEvaluator.PasswordMatch(request.Dto.Password!, user.Salt, user.Password);
 
             if (!isPasswordMatch)
             {
-                return new BaseResponse<AccessTokenResponse>(false, null);
+                return new BaseResponse<AccessTokenResponse>(new Error("IncorrectPassword", "The password is incorrect"));
             }
 
             var token = _accessTokenGenerator.GenerateAccessToken(user.Username, user.Role.Code);
 
-            return new BaseResponse<AccessTokenResponse>(true, new AccessTokenResponse(token));
+            return new BaseResponse<AccessTokenResponse>(new AccessTokenResponse(token));
         }
     }
 }
