@@ -1,8 +1,11 @@
 using Application;
 using Infrastructure;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Presentation.Middlewares;
 using Presentation.Utils;
 using Serilog;
+using System.Reflection;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +36,10 @@ builder.Host.UseSerilog((context, configuration) =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+
     c.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
     {
         Type = SecuritySchemeType.Http,
@@ -60,6 +67,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseSerilogRequestLogging();
 

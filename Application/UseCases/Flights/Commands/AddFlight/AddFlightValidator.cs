@@ -15,10 +15,18 @@ namespace Application.UseCases.Flights.Commands.AddFlight
             RuleFor(x => x.Dto.Origin).NotNull().NotEmpty().MaximumLength(256);
             RuleFor(x => x.Dto.Arrival).NotNull().NotEmpty();
             RuleFor(x => x.Dto.Departure).NotNull().NotEmpty();
-            RuleFor(x => x.Dto.Arrival)
-                .Must((command, arrival) =>
+
+            RuleFor(x => x.Dto).Must(dto =>
+            {
+                return dto.Origin != dto.Destination;
+            })
+                .WithErrorCode("FlightStructureError")
+                .WithMessage("Origin and Destination can not be the same");
+
+            RuleFor(x => x.Dto)
+                .Must((dto) =>
                 {
-                    return command.Dto.Departure.ToUniversalTime() < command.Dto.Arrival.ToUniversalTime();
+                    return dto.Departure.ToUniversalTime() < dto.Arrival.ToUniversalTime();
                 })
                 .WithErrorCode("ArrivalValidationError")
                 .WithMessage("The arrival time must be after the departure time");

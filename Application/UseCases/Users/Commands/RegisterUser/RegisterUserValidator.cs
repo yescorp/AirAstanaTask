@@ -21,6 +21,7 @@ namespace Application.UseCases.Users.Commands.RegisterUser
                     var usernameExists = await userRepository.AnyAsync(u => u.Username == username, cancellationToken);
                     return !usernameExists; // Username should be unique (i.e. it should not exist in the db)
                 })
+                .WithErrorCode("Conflict")
                 .WithMessage("Username already exists, please choose another one");
         }
     }

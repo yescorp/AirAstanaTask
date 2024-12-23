@@ -15,8 +15,15 @@ namespace Application.UseCases.Flights.Queries.GetFlights
     {
         public GetFlightsQueryValidator()
         {
-            RuleFor(x => x.Origin).NotNull().NotEmpty().MaximumLength(256);
-            RuleFor(x => x.Destination).NotNull().NotEmpty().MaximumLength(256);
+            RuleFor(x => x.Origin).MaximumLength(256);
+            RuleFor(x => x.Destination).MaximumLength(256);
+
+            RuleFor(x => x).Must(flight =>
+            {
+                return flight.Origin != null || flight.Destination != null;
+            })
+                .WithErrorCode("FilterError")
+                .WithMessage("Either or both Origin and Destination filters should be specified");
         }
     }
 }
